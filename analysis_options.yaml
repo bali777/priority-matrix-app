@@ -1,0 +1,26 @@
+# Static analysis configuration for this project.
+#
+# This file deliberately does not depend on any hosted package (such as
+# flutter_lints) so that the project analyses offline with zero downloads.
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_empty_else
+    - avoid_print
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_fields
+    - prefer_final_locals
+    - prefer_single_quotes
+    - unnecessary_late
+    - unnecessary_null_awareness

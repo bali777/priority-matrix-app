@@ -1,50 +1,90 @@
 import 'package:flutter/material.dart';
 
-// This widget represents a single, self-contained task card.
-class TaskCard extends StatelessWidget {
-  final String taskTitle;
-  final bool isCompleted;
+import 'task_model.dart';
 
-  // The constructor requires a title and completion status for each card.
+/// A single, self-contained task card.
+///
+/// * Tapping the checkbox toggles completion.
+/// * Tapping the card body opens the edit dialog.
+/// * Long-pressing the card deletes it (after confirmation).
+/// * The whole card is [Draggable] when wrapped by the parent list.
+class TaskCard extends StatelessWidget {
   const TaskCard({
     super.key,
-    required this.taskTitle,
-    this.isCompleted = false,
+    required this.task,
+    this.onToggleCompleted,
+    this.onTap,
+    this.onLongPress,
+    this.compact = false,
   });
+
+  final Task task;
+
+  final ValueChanged<bool>? onToggleCompleted;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+
+  /// Inbox cards are rendered in a horizontal strip, so they are slightly
+  /// more compact.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    // A Material widget gives us the nice "lifting" effect when we drag it.
     return Material(
       color: Colors.transparent,
-      // The main container for the card.
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        decoration: BoxDecoration(
-          // A slightly lighter shade of dark gray to stand out from the background.
-          color: const Color(0xFF2A2A2A),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Row(
-          children: [
-            // The checkbox icon.
-            Icon(
-              isCompleted ? Icons.check_box : Icons.check_box_outline_blank,
-              color: isCompleted ? Colors.green : const Color(0xFF007BFF),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: compact ? 6 : 10,
+          ),
+          margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2A2A2A),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: task.isCompleted
+                  ? const Color(0x33FFFFFF)
+                  : task.quadrant.accentColor,
+              width: task.isCompleted ? 1 : 1.5,
             ),
-            const SizedBox(width: 10), // A small space between the icon and text.
-            // The Expanded widget ensures the text doesn't overflow the screen.
-            Expanded(
-              child: Text(
-                taskTitle,
-                style: TextStyle(
-                  color: isCompleted ? Colors.white54 : Colors.white,
-                  decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => onToggleCompleted?.call(!task.isCompleted),
+                child: Icon(
+                  task.isCompleted
+                      ? Icons.check_box
+                      : Icons.check_box_outline_blank,
+                  color: task.isCompleted
+                      ? Colors.green
+                      : task.quadrant.accentColor,
+                  size: compact ? 20 : 24,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  task.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: compact ? 13 : 14,
+                    color: task.isCompleted ? Colors.white54 : Colors.white,
+                    decoration: task.isCompleted
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
