@@ -1,7 +1,7 @@
 name: priority_matrix_app
 description: A task management app using the Eisenhower Matrix.
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -17,4 +16,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
